@@ -16,7 +16,7 @@ using webhook_api.Interfaces;
 
 namespace webhook_api.Controllers.Tests
 {
-    [TestClass()]
+    [TestClass]
     public class WebhookControllerTests
     {
         private readonly IFixture _fixture;

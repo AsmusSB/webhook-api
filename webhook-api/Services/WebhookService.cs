@@ -98,15 +98,15 @@ namespace webhook_api.Services
                 }
 
                 var content = new StringContent(webhookStatus.Body, Encoding.UTF8, "application/json");
-                //try
-                //{
-                    response = await _client.PostAsync(webhookStatus.Config.DestinationUrl, content);
-                //}
-                //catch (Exception e)
-                //{
-                //    Console.WriteLine(e.Message);
-                //    throw;
-                //}
+            //try
+            //{
+                response = await _client.PostAsync(webhookStatus.Config.DestinationUrl, content);
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine(e);
+            //    return response;
+            //}
             //}
             //catch (Exception e)
             //{
