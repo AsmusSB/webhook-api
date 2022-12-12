@@ -7,25 +7,29 @@ namespace webhook_api.Interfaces
 {
     public interface IWebhookConfigurationMapper
     {
-        WebhookConfiguration Map(WebhookConfigurationApi source, List<HeaderApi>? headers, List<WebhookStatusApi> webhooks);
+        WebhookConfiguration Map(WebhookConfigurationApi source);
     }
 
     public class WebhookConfigurationMapper : IWebhookConfigurationMapper
     {
         private readonly IHeaderMapper _headerMapper;
         private readonly IWebhookStatusMapper _statusMapper;
+
+        public WebhookConfigurationMapper()
+        {
+        }
+
         public WebhookConfigurationMapper(IHeaderMapper headerMapper, IWebhookStatusMapper statusMapper)
         {
             _headerMapper = headerMapper;
             _statusMapper = statusMapper;
         }
-
-        public WebhookConfiguration Map(WebhookConfigurationApi source, List<HeaderApi>? headers, List<WebhookStatusApi> webhooks)
+        public WebhookConfiguration Map(WebhookConfigurationApi source)
         {
             List<Header> headerList = new List<Header>();
-            if (headers != null)
+            if (source.Headers != null)
             {
-                foreach (var h in headers)
+                foreach (var h in source.Headers)
                 {
                     var header = _headerMapper.Map(h);
                     headerList.Add(header);
@@ -33,7 +37,7 @@ namespace webhook_api.Interfaces
             }
 
             List<WebhookStatus> statusList = new List<WebhookStatus>();
-            foreach (var w in webhooks)
+            foreach (var w in source.Webhooks)
             {
                 var webhook = _statusMapper.Map(w);
                 statusList.Add(webhook);

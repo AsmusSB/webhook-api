@@ -15,16 +15,16 @@ namespace webhook_api.Interfaces
 {
     public interface IDatabaseInterface
     {
-        WebhookConfiguration SaveForRetryLater(WebhookConfiguration webhookConfiguration);
-        void SaveSuccessWebhook(WebhookConfiguration entity);
-        void SaveFailedWebhook(WebhookConfiguration entity);
+        //WebhookConfiguration SaveForRetryLater(WebhookConfiguration webhookConfiguration);
+        //void SaveSuccessWebhook(WebhookConfiguration entity);
+        //void SaveFailedWebhook(WebhookConfiguration entity);
         void SaveWebhookStatusAndHistory(WebhookStatus entity, HttpResponseMessage response);
-        List<WebhookConfiguration> GetAllWebhookConfigurations();
+        //List<WebhookConfiguration> GetAllWebhookConfigurations();
         List<WebhookStatus> GetAllWebhookStatuses();
-        List<Header> GetAllHeaders();
-        WebhookConfiguration GetConfigurationById(int id);
-        WebhookConfiguration DeleteFromRetry(int id);
-        List<Header>? GetHeadersByConfigId(int id);
+        //List<Header> GetAllHeaders();
+        //WebhookConfiguration GetConfigurationById(int id);
+        //WebhookConfiguration DeleteFromRetry(int id);
+        //List<Header>? GetHeadersByConfigId(int id);
         string AddConfiguration(WebhookConfiguration webhookConfiguration);
     }
 }

@@ -46,72 +46,74 @@ namespace webhook_api.Services
 
         public void SaveWebhookStatusAndHistory(WebhookStatus webhookStatus, HttpResponseMessage response)
         {
-            //try
-            //{
-                bool alreadyExists = GetAllWebhookStatuses().Any(x => x.Config.Id == webhookStatus.Config.Id);
-                if (response.IsSuccessStatusCode)
+            bool alreadyExists = GetAllWebhookStatuses().Any(x => x.Config.Id == webhookStatus.Config.Id);
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("successful webhook updated for id: " + webhookStatus.Config.Id);
+                if (alreadyExists)
                 {
-                    Console.WriteLine("successful webhook updated for id: " + webhookStatus.Config.Id);
-                    if (alreadyExists)
-                    {
-                        Console.WriteLine("webhook already exists ind database");
-                        webhookStatus.TimesSuccessfullyFired++;
-                        webhookStatus.CurrentFailedAttempts = 0;
-                        webhookStatus.Status = "Waiting for trigger";
-                        _db.WebhookStatus.Update(webhookStatus);
+                    Console.WriteLine("webhook already exists ind database");
+                    webhookStatus.TimesSuccessfullyFired++;
+                    webhookStatus.CurrentFailedAttempts = 0;
+                    webhookStatus.Status = "Waiting for trigger";
+                    _db.WebhookStatus.Update(webhookStatus);
 
-                        WebhookHistory webhookHistory = new WebhookHistory();
-                        webhookHistory.Result = "Success";
-                        webhookHistory.StatusCode = response.StatusCode;
-                        webhookHistory.TimeStamp = DateTime.Now;
-                        webhookHistory.StatusId = webhookStatus.Id;
-                        _db.WebhookHistory.Add(webhookHistory);
-                        _db.SaveChanges();
-                    }
-                    else
+                    WebhookHistory webhookHistory = new WebhookHistory
                     {
-                        Console.WriteLine("wh doesnt exist in database already");
-                        webhookStatus.TimesSuccessfullyFired = 1; 
-                        webhookStatus.CurrentFailedAttempts = 0;
-                        webhookStatus.Status = "Waiting for trigger";
-                        _db.WebhookStatus.Add(webhookStatus);
-                        
-                        WebhookHistory webhookHistory = new WebhookHistory();
-                        webhookHistory.Result = "Success";
-                        webhookHistory.StatusCode = response.StatusCode;
-                        webhookHistory.TimeStamp = DateTime.Now;
-                        webhookHistory.StatusId = webhookStatus.Id;
-                        _db.WebhookHistory.Add(webhookHistory);
-                        _db.SaveChanges();
-                    }
+                        Result = "Success",
+                        StatusCode = response.StatusCode,
+                        TimeStamp = DateTime.Now,
+                        StatusId = webhookStatus.Id
+                    };
+
+                    _db.WebhookHistory.Add(webhookHistory);
+                    _db.SaveChanges();
                 }
                 else
                 {
-                    Console.WriteLine(webhookStatus.Config.Id + " webhook updated: failed attempt");
-                    if (alreadyExists & webhookStatus.CurrentFailedAttempts <= 3)
-                    {
-                        webhookStatus.CurrentFailedAttempts++;
-                        webhookStatus.Status = "Waiting to be retried";
+                    Console.WriteLine("wh doesnt exist in database already");
+                    webhookStatus.TimesSuccessfullyFired = 1; 
+                    webhookStatus.CurrentFailedAttempts = 0;
+                    webhookStatus.Status = "Waiting for trigger";
+                    _db.WebhookStatus.Add(webhookStatus);
 
-                        _db.WebhookStatus.Update(webhookStatus);
-                        _db.SaveChanges();
-                    }
-                    if(webhookStatus.CurrentFailedAttempts > 3)
+                    WebhookHistory webhookHistory = new WebhookHistory
                     {
-                        WebhookHistory webhookHistory = new WebhookHistory();
-                        webhookHistory.Result = "Failed"; 
-                        webhookHistory.StatusCode = response.StatusCode;
-                        webhookHistory.TimeStamp = DateTime.Now;
-                        webhookHistory.StatusId = webhookStatus.Id;
-                        _db.WebhookHistory.Add(webhookHistory); 
-                        _db.SaveChanges();
-                    }
+                        Result = "Success",
+                        StatusCode = response.StatusCode,
+                        TimeStamp = DateTime.Now,
+                        StatusId = webhookStatus.Id
+                    };
+
+                    _db.WebhookHistory.Add(webhookHistory);
+                    _db.SaveChanges();
                 }
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e);
-            //}
+            }
+            else
+            {
+                Console.WriteLine(webhookStatus.Config.Id + " webhook updated: failed attempt");
+                if (alreadyExists & webhookStatus.CurrentFailedAttempts <= 3)
+                {
+                    webhookStatus.CurrentFailedAttempts++;
+                    webhookStatus.Status = "Waiting to be retried later";
+
+                    _db.WebhookStatus.Update(webhookStatus);
+                    _db.SaveChanges();
+                }
+                if(webhookStatus.CurrentFailedAttempts > 3)
+                {
+                    WebhookHistory webhookHistory = new WebhookHistory
+                    {
+                        Result = "Failed",
+                        StatusCode = response.StatusCode,
+                        TimeStamp = DateTime.Now,
+                        StatusId = webhookStatus.Id
+                    };
+
+                    _db.WebhookHistory.Add(webhookHistory); 
+                    _db.SaveChanges();
+                }
+            }
         }
 
         public List<WebhookConfiguration> GetAllWebhookConfigurations()
@@ -175,7 +177,7 @@ namespace webhook_api.Services
             try
             {
                 if (webhook.RetryTimeSpan < 1 || webhook.RetryTimeSpan > 5) throw new ArgumentOutOfRangeException(result = "RetryTimeSpan has to be between 1-5");
-                if (webhook.TryCount < 1 || webhook.TryCount > 5) throw new ArgumentOutOfRangeException(result = "TryCount cannot be between 1-5");
+                if (webhook.TryCount < 1 || webhook.TryCount > 5) throw new ArgumentOutOfRangeException(result = "TryCount has to be between 1-5");
             }
             catch (ArgumentOutOfRangeException e)
             {

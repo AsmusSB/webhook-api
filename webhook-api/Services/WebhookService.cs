@@ -23,18 +23,19 @@ namespace webhook_api.Services
         Task<WebhookStatus> ExecuteWebhookWithPollyRetry(WebhookStatus webhookStatus);
         Task<WebhookConfiguration> CreateWebhookConfiguration(WebhookConfigurationApi webhookConfigurationApi);
         Task RetryAllWebhooks();
+        Task<HttpResponseMessage> SendWebhook(WebhookStatus webhookStatus);
+
     }
     public class WebhookService : IWebhookService
     {
-        private readonly HttpClient _client;
+        private readonly HttpClient _client = new HttpClient();
         private readonly IDatabaseInterface _db;
         private readonly IWebhookConfigurationMapper _configMapper;
 
-        private WebhookDBContext _databaseContext;
+        private readonly WebhookDBContext _databaseContext;
 
-        public WebhookService(HttpClient client, IDatabaseInterface db, IWebhookConfigurationMapper configMapper, WebhookDBContext databaseContext)
+        public WebhookService(IDatabaseInterface db, IWebhookConfigurationMapper configMapper, WebhookDBContext databaseContext)
         {
-            _client = client;
             _db = db;
             _configMapper = configMapper;
             _databaseContext = databaseContext;
@@ -42,7 +43,7 @@ namespace webhook_api.Services
 
         public async Task<WebhookConfiguration> CreateWebhookConfiguration(WebhookConfigurationApi webhookConfigurationApi)
         {
-            WebhookConfiguration webhookConfig = _configMapper.Map(webhookConfigurationApi, webhookConfigurationApi.Headers, webhookConfigurationApi.Webhooks);
+            WebhookConfiguration webhookConfig = _configMapper.Map(webhookConfigurationApi);
            
             _db.AddConfiguration(webhookConfig);
             return webhookConfig;
@@ -84,35 +85,31 @@ namespace webhook_api.Services
         public async Task<HttpResponseMessage> SendWebhook(WebhookStatus webhookStatus)
         {
             HttpResponseMessage response = new HttpResponseMessage();
-            //try
-            //{
-                if (webhookStatus.Config.Headers != null)
+            response.StatusCode = (HttpStatusCode)StatusCodes.Status400BadRequest;
+
+            if (webhookStatus.Config.Headers != null)
+            {
+                foreach (var h in webhookStatus.Config.Headers)
                 {
-                    foreach (var h in webhookStatus.Config.Headers)
+                    if (!_client.DefaultRequestHeaders.Contains(h.HeaderName))
                     {
-                        if (!_client.DefaultRequestHeaders.Contains(h.HeaderName))
-                        {
-                            _client.DefaultRequestHeaders.Add(h.HeaderName, h.HeaderValue);
-                        }
+                        _client.DefaultRequestHeaders.Add(h.HeaderName, h.HeaderValue);
                     }
                 }
+            }
 
-                var content = new StringContent(webhookStatus.Body, Encoding.UTF8, "application/json");
-            //try
-            //{
+            var content = new StringContent(webhookStatus.Body, Encoding.UTF8, "application/json");
+            try
+            {
                 response = await _client.PostAsync(webhookStatus.Config.DestinationUrl, content);
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e);
-            //    return response;
-            //}
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e);
-            //}
-            HttpResponseMessage r2 = new HttpResponseMessage(); 
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return response;
+            }
+            
+            Console.WriteLine("statuscode: " + response.StatusCode);
 
             return response;
         }
