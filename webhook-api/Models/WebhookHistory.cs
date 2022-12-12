@@ -13,7 +13,5 @@ namespace webhook_api.Models
         public HttpStatusCode StatusCode { get; set; }
         public DateTime TimeStamp { get; set; }
         public int StatusId { get; set; }
-        //[ForeignKey("WebhookHistory")]
-        //public WebhookStatus Status { get; set; }
     }
 }

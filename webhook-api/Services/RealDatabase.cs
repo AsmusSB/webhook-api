@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using webhook_api.Context;
 using webhook_api.Interfaces;
@@ -168,13 +169,22 @@ namespace webhook_api.Services
             return headerList;
         }
 
-        public int AddConfiguration(WebhookConfiguration webhook)
+        public string AddConfiguration(WebhookConfiguration webhook)
         {
-            if (webhook.RetryTimeSpan < 1 || webhook.RetryTimeSpan > 5) throw new ArgumentOutOfRangeException("RetryTimeSpan has to be between 1-5");
-            if (webhook.TryCount < 1 || webhook.TryCount > 5) throw new ArgumentOutOfRangeException("TryCount cannot be between 1-5");
+            string result = "success";
+            try
+            {
+                if (webhook.RetryTimeSpan < 1 || webhook.RetryTimeSpan > 5) throw new ArgumentOutOfRangeException(result = "RetryTimeSpan has to be between 1-5");
+                if (webhook.TryCount < 1 || webhook.TryCount > 5) throw new ArgumentOutOfRangeException(result = "TryCount cannot be between 1-5");
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                Console.WriteLine(e);
+                return result;
+            }
             EntityEntry<WebhookConfiguration> newConfig = _db.WebhookConfigurations.Add(webhook);
             _db.SaveChanges();
-            return newConfig.Entity.Id;
+            return result;
         }
     }
 }

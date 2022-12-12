@@ -43,16 +43,17 @@ namespace webhook_api.Services
         public async Task<WebhookConfiguration> CreateWebhookConfiguration(WebhookConfigurationApi webhookConfigurationApi)
         {
             WebhookConfiguration webhookConfig = _configMapper.Map(webhookConfigurationApi, webhookConfigurationApi.Headers, webhookConfigurationApi.Webhooks);
-            int whId = _db.AddConfiguration(webhookConfig);
+           
+            _db.AddConfiguration(webhookConfig);
             return webhookConfig;
         }
 
         public async Task<WebhookStatus> ExecuteWebhookWithPollyRetry(WebhookStatus webhookStatus)
         {
-            //var retryDelay = TimeSpan.FromSeconds(webhookStatus.Config.RetryTimeSpan);
-            //var retryCount = webhookStatus.Config.TryCount;
-            var retryDelay = TimeSpan.FromSeconds(1);
-            var retryCount = 3;
+            var retryDelay = TimeSpan.FromSeconds(webhookStatus.Config.RetryTimeSpan);
+            var retryCount = webhookStatus.Config.TryCount;
+            //var retryDelay = TimeSpan.FromSeconds(1);
+            //var retryCount = 3;
 
             webhookStatus.Status = "Sending";
             _databaseContext.Update(webhookStatus);
@@ -115,79 +116,5 @@ namespace webhook_api.Services
 
             return response;
         }
-
-        //private void ManageDatabase(WebhookStatus webhookStatus, HttpResponseMessage response)
-        //{
-        //    bool alreadyExists = _db.GetAllWebhookStatuses().Any(x => x.Id == webhookStatus.Config.Id);
-
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        Console.WriteLine(webhookStatus.Config.Id + ": saved in successful webhooks");
-        //        _db.SaveSuccessWebhook(webhookStatus);
-
-        //        if (alreadyExists)
-        //        {
-        //            Console.WriteLine(webhookStatus.Config.Id + " deleted from retry");
-        //            _db.DeleteFromRetry(webhookStatus.Config.Id);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (alreadyExists)
-        //        {
-        //            Console.WriteLine(webhookStatus.Config.Id + " deleted from retry");
-        //            _db.DeleteFromRetry(webhookStatus.Config.Id);
-        //        }
-        //        webhookStatus.CurrentFailedAttempts++;
-        //        if (webhookStatus.CurrentFailedAttempts <= 3)
-        //        {
-        //            Console.WriteLine(webhookStatus.Config.Id + ": saved for retry later");
-        //            _db.SaveForRetryLater(webhookStatus);
-        //        }
-
-        //        if (webhookStatus.CurrentFailedAttempts > 3)
-        //        {
-        //            // add statuscode to failed webhooks table
-        //            Console.WriteLine(webhookStatus.Config.Id + ": saved in failed webhooks");
-        //            _db.SaveFailedWebhook(webhookStatus);
-        //        }
-        //    }
-        //}
-
-        //public async Task<HttpResponseMessage> SendWebhook(WebhookConfiguration webhookConfiguration)
-        //{
-        //    var headerList = _db.GetHeadersByConfigId(webhookConfiguration.Id);
-
-        //    if (headerList != null)
-        //    {
-        //        foreach (var h in headerList)
-        //        {
-        //            _client.DefaultRequestHeaders.Add(h.HeaderName, h.HeaderValue);
-        //            _client.DefaultRequestHeaders.Add(h.HeaderName, h.HeaderValue);
-        //        }
-        //    }
-
-        //    //if (webhookConfiguration.Headers != null)
-        //    //{
-        //    //    foreach (var h in webhookConfiguration.Headers)
-        //    //    {
-        //    //        _client.DefaultRequestHeaders.Add(h.HeaderName, h.HeaderValue);
-        //    //    }
-        //    //}
-
-        //    var content = new StringContent(webhookConfiguration.TenantId, Encoding.UTF8, "application/json"); //change to body
-        //    HttpResponseMessage response;
-        //    try
-        //    {
-        //        response = await _client.PostAsync(webhookConfiguration.DestinationUrl, content);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e.Message);
-        //        throw;
-        //    }
-
-        //    return response;
-        //}
     }
 }

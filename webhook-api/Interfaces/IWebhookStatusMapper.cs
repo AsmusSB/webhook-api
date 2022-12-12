@@ -21,13 +21,5 @@ namespace webhook_api.Interfaces
                 Status = "Waiting for trigger"
             };
         }
-
-        //public WebhookStatusApi MapToApi(WebhookStatus source)
-        //{
-        //    return new WebhookStatusApi()
-        //    {
-        //        Body = source.Body
-        //    };
-        //}
     }
 }

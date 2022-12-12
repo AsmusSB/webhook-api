@@ -21,32 +21,35 @@ namespace webhook_api.Controllers.Tests
     {
         private readonly IFixture _fixture;
         private readonly Mock<IWebhookService> _serviceMock;
-        private readonly WebhookController _sut;
+        private readonly WebhookController _controller;
+        private readonly RealDatabase _db;
 
-        public WebhookControllerTests(WebhookController controller, IWebhookService service, IFixture fixture, Mock<IWebhookService> serviceMock, WebhookController sut)
+        public WebhookControllerTests(RealDatabase db)
         {
             _fixture = new Fixture();
             _serviceMock = _fixture.Freeze<Mock<IWebhookService>>();
-            _sut = new WebhookController(_serviceMock.Object); // creates implementation in-memory
+            _controller = new WebhookController(_serviceMock.Object); // creates implementation in-memory
+            _db = db;
         }
 
         [TestMethod]
         [ExpectedException((typeof(ArgumentOutOfRangeException)))]
-        public async Task AddConfigurationRetryTimeSpanTooLow()
+        public async Task AddConfiguration_RetryTimeSpanTooLow_ShouldThrowOutOfRangeException()
         {
             //Arrange
-            WebhookConfigurationApi whConfig = new WebhookConfigurationApi();
+            WebhookConfiguration wh = new WebhookConfiguration();
 
             //Act
-            whConfig.TenantId = "123";
-            whConfig.DestinationUrl = "url";
-            whConfig.TryCount = 1;
-            whConfig.RetryTimeSpan = 0;
-            whConfig.Headers = new List<HeaderApi>();
-            whConfig.Webhooks = new List<WebhookStatusApi>();
+            wh.Id = 1;
+            wh.TenantId = "tenant";
+            wh.DestinationUrl = "url";
+            wh.Headers = new List<Header>();
+            wh.Webhooks = new List<WebhookStatus>();
+            wh.TryCount = 1;
+            wh.RetryTimeSpan = 0;
 
             //Assert
-            await _sut.CreateWebhook(whConfig);
+            _db.AddConfiguration(wh);
         }
 
         [Fact]
@@ -59,7 +62,7 @@ namespace webhook_api.Controllers.Tests
             _serviceMock.Setup(x => x.CreateWebhookConfiguration(request)).ReturnsAsync(response);
 
             //Act
-            var result = await _sut.CreateWebhook(request);
+            var result = await _controller.CreateWebhook(request).ConfigureAwait(false);
 
             //Assert
             result.Should().NotBeNull();

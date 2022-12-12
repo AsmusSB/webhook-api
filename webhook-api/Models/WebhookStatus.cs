@@ -21,12 +21,8 @@ namespace webhook_api.Models
         public int CurrentFailedAttempts { get; set; }
         public string Status { get; set; }
         [ForeignKey("WebhookStatus")]
-        //[InverseProperty(nameof(WebhookConfiguration.WebhookStatusCollection))]
         [Key]
         public int Id { get; set; }
         public WebhookConfiguration Config { get; set; }
-
-        //[InverseProperty(nameof(WebhookHistory.Status))]
-        //private ICollection<List<WebhookHistory>> HistoryCollection { get; set; }
     }
 }

@@ -25,6 +25,6 @@ namespace webhook_api.Interfaces
         WebhookConfiguration GetConfigurationById(int id);
         WebhookConfiguration DeleteFromRetry(int id);
         List<Header>? GetHeadersByConfigId(int id);
-        int AddConfiguration(WebhookConfiguration webhookConfiguration);
+        string AddConfiguration(WebhookConfiguration webhookConfiguration);
     }
 }
