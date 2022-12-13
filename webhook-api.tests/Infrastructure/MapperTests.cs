@@ -12,7 +12,7 @@ namespace webhook_api.tests.Infrastructure
         private readonly IWebhookConfigurationMapper _configMapper = new WebhookConfigurationMapper();
         
         [Fact]
-        public async Task ConfigurationMapper_MapsToCorrectValues()
+        public async Task ConfigurationMapper_AllValues_MapsToCorrectValues()
         {
             //Arrange
             WebhookConfigurationApi whConfigApi = new WebhookConfigurationApi

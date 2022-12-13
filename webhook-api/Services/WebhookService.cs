@@ -41,6 +41,8 @@ namespace webhook_api.Services
             _databaseContext = databaseContext;
         }
 
+        public WebhookService() {}
+
         public async Task<WebhookConfiguration> CreateWebhookConfiguration(WebhookConfigurationApi webhookConfigurationApi)
         {
             WebhookConfiguration webhookConfig = _configMapper.Map(webhookConfigurationApi);

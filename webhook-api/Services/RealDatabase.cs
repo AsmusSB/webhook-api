@@ -15,6 +15,7 @@ namespace webhook_api.Services
             _db = db;
         }
 
+        public RealDatabase() {}
         public WebhookConfiguration SaveForRetryLater(WebhookConfiguration webhook)
         {
             WebhookConfiguration tempWebhook = GetConfigurationById(webhook.Id);

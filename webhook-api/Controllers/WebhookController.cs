@@ -15,7 +15,6 @@ namespace webhook_api.Controllers
     public class WebhookController : ControllerBase
     {
         private readonly IWebhookService _webhookService;
-        private readonly IDatabaseInterface _db;
         public WebhookController(IWebhookService webhookService)
         {
             _webhookService = webhookService;

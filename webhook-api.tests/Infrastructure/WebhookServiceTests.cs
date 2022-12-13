@@ -15,52 +15,57 @@ namespace webhook_api.tests.Infrastructure
 {
     public class WebhookServiceTests
     {
-        private readonly IFixture _fixture;
-        private readonly Mock<IWebhookService> _serviceMock;
-        private readonly IWebhookService _service;
-
-        public WebhookServiceTests()
-        {
-            _fixture = new Fixture();
-            _serviceMock = _fixture.Freeze<Mock<IWebhookService>>();
-        }
-
+        private readonly IWebhookService _webhookService = new WebhookService();
+        
         [Fact]
-        public async Task SendWebhook()
+        public async Task SendWebhook_InvalidUrl_ReturnsBadRequest()
         {
             //Arrange
             WebhookConfiguration wh = new WebhookConfiguration
             {
-                Id = 1,
-                TenantId = "tenant",
-                DestinationUrl = "url",
-                Headers = new List<Header>(),
-                Webhooks = new List<WebhookStatus>(),
-                TryCount = 1,
-                RetryTimeSpan = 0
+                DestinationUrl = "InvalidUrl",
             };
 
             WebhookStatus whStatus = new WebhookStatus
             {
-                Id = 1,
                 Body = "message",
-                TriggerEvent = "Trigger",
-                TimesSuccessfullyFired = 1,
-                CurrentFailedAttempts = 0,
-                Status = "Waiting for trigger",
+                Config = wh
             };
-
-            wh.Webhooks.Add(whStatus);
 
             HttpResponseMessage expected = new HttpResponseMessage();
             expected.StatusCode = (HttpStatusCode)StatusCodes.Status400BadRequest;
 
             //Act
-            //var result = await _serviceMock.Object.SendWebhook(whStatus);
-            var result = await _service.SendWebhook(whStatus);
+            var result = await _webhookService.SendWebhook(whStatus);
 
             //Assert
             Assert.Equal(expected.StatusCode, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task SendWebhook_ValidUrl_DoesntReturnBadRequest()
+        {
+            //Arrange
+            WebhookConfiguration wh = new WebhookConfiguration
+            {
+                DestinationUrl = "https://eou05wu1ireya27.m.pipedream.net",
+            };
+
+            WebhookStatus whStatus= new WebhookStatus
+            {
+                Body = "message",
+                Config = wh
+            };
+
+            HttpResponseMessage expected = new HttpResponseMessage();
+            expected.StatusCode = (HttpStatusCode)StatusCodes.Status400BadRequest;
+
+            //Act
+            var result = await _webhookService.SendWebhook(whStatus);
+
+            //Assert
+            Assert.NotEqual(expected.StatusCode, result.StatusCode);
+            Assert.Equal((HttpStatusCode)StatusCodes.Status200OK, result.StatusCode);
         }
 
         [Fact]

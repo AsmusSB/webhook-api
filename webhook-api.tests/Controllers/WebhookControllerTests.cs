@@ -16,21 +16,18 @@ namespace webhook_api.tests.Controllers
         private readonly IFixture _fixture;
         private readonly Mock<IWebhookService> _serviceMock;
         private readonly WebhookController _controller;
-        private readonly Mock<IDatabaseInterface> _db;
 
         public WebhookControllerTests()
         {
             _fixture = new Fixture();
             _serviceMock = _fixture.Freeze<Mock<IWebhookService>>();
             _controller = new WebhookController(_serviceMock.Object); // creates implementation in-memory
-            _db = _fixture.Freeze<Mock<IDatabaseInterface>>();
         }
 
         [Fact]
         public async Task CreateWebhook_ShouldReturnOkResponse_WhenWebhookCreated()
         {
             //Arrange
-            WebhookConfigurationApi whConfig = new WebhookConfigurationApi();
             var request = _fixture.Create<WebhookConfigurationApi>();
             var response = _fixture.Create<WebhookConfiguration>();
             _serviceMock.Setup(x => x.CreateWebhookConfiguration(request)).ReturnsAsync(response);
@@ -41,7 +38,7 @@ namespace webhook_api.tests.Controllers
             //Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<ActionResult<WebhookConfiguration>>();
-            //result.Should().BeOfType<WebhookConfiguration>();
+            result.Should().BeOfType<WebhookConfiguration>();
         }
     }
 }
