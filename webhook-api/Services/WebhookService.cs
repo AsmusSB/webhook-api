@@ -20,7 +20,6 @@ namespace webhook_api.Services
 {
     public interface IWebhookService
     {
-        Task<WebhookStatus> ExecuteWebhookWithPollyRetry(WebhookStatus webhookStatus);
         Task<WebhookConfiguration> CreateWebhookConfiguration(WebhookConfigurationApi webhookConfigurationApi);
         Task RetryAllWebhooks();
         Task<HttpResponseMessage> SendWebhook(WebhookStatus webhookStatus);

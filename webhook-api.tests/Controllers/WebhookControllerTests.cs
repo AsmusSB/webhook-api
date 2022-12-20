@@ -28,6 +28,10 @@ namespace webhook_api.tests.Controllers
         public async Task CreateWebhook_ShouldReturnOkResponse_WhenWebhookCreated()
         {
             //Arrange
+            _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
+                .ForEach(b => _fixture.Behaviors.Remove(b));
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
             var request = _fixture.Create<WebhookConfigurationApi>();
             var response = _fixture.Create<WebhookConfiguration>();
             _serviceMock.Setup(x => x.CreateWebhookConfiguration(request)).ReturnsAsync(response);
@@ -37,8 +41,9 @@ namespace webhook_api.tests.Controllers
 
             //Assert
             result.Should().NotBeNull();
+            //result.Should().return
             result.Should().BeAssignableTo<ActionResult<WebhookConfiguration>>();
-            result.Should().BeOfType<WebhookConfiguration>();
+            //result.Should().BeOfType<WebhookConfiguration>();
         }
     }
 }

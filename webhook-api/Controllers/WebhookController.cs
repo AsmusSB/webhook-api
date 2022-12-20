@@ -22,19 +22,18 @@ namespace webhook_api.Controllers
 
         [HttpPost]
         [Microsoft.AspNetCore.Mvc.Route("create-webhook-configuration")]
-        public async Task<IActionResult> CreateWebhook(WebhookConfigurationApi webhookConfigurationApi)
+        public async Task<ActionResult<WebhookConfiguration>> CreateWebhook(WebhookConfigurationApi webhookConfigurationApi)
         {
             WebhookConfiguration whConfig = await _webhookService.CreateWebhookConfiguration(webhookConfigurationApi);
             return Ok(whConfig);
-                
         }
 
-        [HttpPost]
-        [Microsoft.AspNetCore.Mvc.Route("send-webhook-configuration")]
-        public async Task<IActionResult> SendWebhook(WebhookStatus webhookStatus)
-        {
-            await _webhookService.ExecuteWebhookWithPollyRetry(webhookStatus);
-            return Ok(webhookStatus);
-        }
+        //[HttpPost]
+        //[Microsoft.AspNetCore.Mvc.Route("send-webhook-configuration")]
+        //public async Task<IActionResult> SendWebhook(WebhookStatus webhookStatus)
+        //{
+        //    await _webhookService.ExecuteWebhookWithPollyRetry(webhookStatus);
+        //    return Ok(webhookStatus);
+        //}
     }
 }

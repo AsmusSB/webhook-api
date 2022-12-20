@@ -30,6 +30,7 @@ namespace webhook_api
                 .AddJsonOptions(options =>
                     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
                 );
+
             builder.Services.AddDbContext<WebhookDBContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("ConStr")));
             builder.Services.AddHostedService<WebhookBackgroundService>();
             builder.Services.AddHttpClient<IWebhookService, WebhookService>(client => { });
