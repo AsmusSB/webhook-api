@@ -11,6 +11,10 @@ using webhook_api.Context;
 using System;
 using System.Text.Json.Serialization;
 using webhook_api.Interfaces;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using System.Text.Json;
+using FluentAssertions.Common;
+using Newtonsoft.Json;
 
 namespace webhook_api
 {
@@ -32,7 +36,7 @@ namespace webhook_api
                 );
 
             builder.Services.AddDbContext<WebhookDBContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("ConStr")));
-            builder.Services.AddHostedService<WebhookBackgroundService>();
+            //builder.Services.AddHostedService<WebhookBackgroundService>();
             builder.Services.AddHttpClient<IWebhookService, WebhookService>(client => { });
 
             builder.Services.AddScoped<IDatabaseInterface, RealDatabase>();
