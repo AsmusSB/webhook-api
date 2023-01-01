@@ -45,10 +45,9 @@ namespace webhook_api.Controllers
 
         [Microsoft.AspNetCore.Mvc.Route("create-webhook-configuration-and-publish-message")]
         [HttpPost]
-        public async Task Post(WebhookConfigurationApi whApi)
+        public async Task<ActionResult<WebhookConfiguration>> Post(WebhookConfigurationApi whApi)
         {
             WebhookConfiguration whConfig = await _webhookService.CreateWebhookConfiguration(whApi);
-
 
             string connectionString =
                 "Endpoint=sb://asmus-webhooks.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=L5xISPU52V+09+RKKI5idDg74SCt73UxbmwtGHo5lhs=";
@@ -60,6 +59,7 @@ namespace webhook_api.Controllers
             });
             var message = new ServiceBusMessage(body);
             await sender.SendMessageAsync(message);
+            return Ok(whConfig);
         }
 
         //[HttpPost]

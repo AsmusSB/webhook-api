@@ -54,8 +54,6 @@ namespace webhook_api.Services
         {
             var retryDelay = TimeSpan.FromSeconds(webhookStatus.Config.RetryTimeSpan);
             var retryCount = webhookStatus.Config.TryCount;
-            //var retryDelay = TimeSpan.FromSeconds(1);
-            //var retryCount = 3;
 
             webhookStatus.Status = "Sending";
             _databaseContext.Update(webhookStatus);
@@ -70,6 +68,18 @@ namespace webhook_api.Services
             _db.SaveWebhookStatusAndHistory(webhookStatus, response);
 
             return webhookStatus;
+        }
+
+        public async Task SendAllWebhooksWhereTriggerDocumentUploaded()
+        {
+            foreach (var wh in _db.GetAllWebhookStatuses())
+            {
+                if (wh.TriggerEvent == "document-uploaded")
+                {
+                    Console.WriteLine("trying to fire webhook: " + wh.Id);
+                    await ExecuteWebhookWithPollyRetry(wh);
+                }
+            }
         }
 
         public async Task RetryAllWebhooks()
