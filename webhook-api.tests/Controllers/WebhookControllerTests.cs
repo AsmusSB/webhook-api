@@ -4,6 +4,7 @@ using Azure;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using NSubstitute;
 using webhook_api.Controllers;
 using webhook_api.Interfaces;
 using webhook_api.Models;
@@ -20,7 +21,7 @@ namespace webhook_api.tests.Controllers
         public WebhookControllerTests()
         {
             _fixture = new Fixture();
-            _serviceMock = _fixture.Freeze<Mock<IWebhookService>>();
+            _serviceMock = new Mock<IWebhookService>();
             _controller = new WebhookController(_serviceMock.Object); // creates implementation in-memory
         }
 
@@ -32,18 +33,14 @@ namespace webhook_api.tests.Controllers
                 .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-            var request = _fixture.Create<WebhookConfigurationApi>();
-            var response = _fixture.Create<WebhookConfiguration>();
-            _serviceMock.Setup(x => x.CreateWebhookConfiguration(request)).ReturnsAsync(response);
+            var whConfigApi = _fixture.Create<WebhookConfigurationApi>();
 
             //Act
-            var result = await _controller.CreateWebhook(request);
+            var result = await _controller.CreateWebhook(whConfigApi);
 
             //Assert
             result.Should().NotBeNull();
-            //result.Should().return
             result.Should().BeAssignableTo<ActionResult<WebhookConfiguration>>();
-            //result.Should().BeOfType<WebhookConfiguration>();
         }
     }
 }

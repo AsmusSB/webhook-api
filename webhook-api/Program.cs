@@ -36,7 +36,8 @@ namespace webhook_api
                 );
 
             builder.Services.AddDbContext<WebhookDBContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("ConStr")));
-            //builder.Services.AddHostedService<WebhookBackgroundService>();
+
+            builder.Services.AddHostedService<WebhookBackgroundService>();
             builder.Services.AddHttpClient<IWebhookService, WebhookService>(client => { });
 
             builder.Services.AddScoped<IDatabaseInterface, RealDatabase>();
@@ -46,7 +47,7 @@ namespace webhook_api
             builder.Services.AddScoped<IWebhookConfigurationMapper, WebhookConfigurationMapper>();
 
 
-
+            
 
 
             builder.Services.AddSwaggerGen();

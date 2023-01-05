@@ -76,7 +76,6 @@ namespace webhook_api.Services
             {
                 if (wh.TriggerEvent == "document-uploaded")
                 {
-                    Console.WriteLine("trying to fire webhook: " + wh.Id);
                     await ExecuteWebhookWithPollyRetry(wh);
                 }
             }
@@ -88,7 +87,6 @@ namespace webhook_api.Services
             {
                 if (wh.CurrentFailedAttempts is >= 0 and <= 3) // change to 1-3
                 {
-                    Console.WriteLine("trying to fire webhook: " + wh.Id);
                     await ExecuteWebhookWithPollyRetry(wh);
                 }
             }

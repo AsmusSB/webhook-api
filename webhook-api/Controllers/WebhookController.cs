@@ -29,17 +29,6 @@ namespace webhook_api.Controllers
         public async Task<ActionResult<WebhookConfiguration>> CreateWebhook(WebhookConfigurationApi webhookConfigurationApi)
         {
             WebhookConfiguration whConfig = await _webhookService.CreateWebhookConfiguration(webhookConfigurationApi);
-
-            //string connectionString =
-            //    "Endpoint=sb://asmus-webhooks.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=L5xISPU52V+09+RKKI5idDg74SCt73UxbmwtGHo5lhs=";
-            //var client = new ServiceBusClient(connectionString);
-            //var sender = client.CreateSender("webhook-added");
-            //string body = JsonConvert.SerializeObject(whConfig, new JsonSerializerSettings
-            //{
-            //    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            //});
-            //var message = new ServiceBusMessage(body); 
-            //await sender.SendMessageAsync(message);
             return Ok(whConfig);
         }
 

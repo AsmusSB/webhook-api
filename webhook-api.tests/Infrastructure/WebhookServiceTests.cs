@@ -67,15 +67,5 @@ namespace webhook_api.tests.Infrastructure
             Assert.NotEqual(expected.StatusCode, result.StatusCode);
             Assert.Equal((HttpStatusCode)StatusCodes.Status200OK, result.StatusCode);
         }
-
-        [Fact]
-        public async Task ExecuteWebhookWithPollyRetry()
-        {
-            //Arrange
-
-            //Act
-
-            //Assert
-        }
     }
 }
