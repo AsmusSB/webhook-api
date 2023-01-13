@@ -1,8 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Azure.Identity;
-using Azure.Security.KeyVault.Certificates;
-using Microsoft.EntityFrameworkCore;
 
 namespace webhook_api.Models
 {
@@ -15,28 +12,6 @@ namespace webhook_api.Models
         public int TryCount { get; set; }
         public int RetryTimeSpan { get; set; }
         public List<WebhookStatusApi> Webhooks { get; set; }
-
-        //public int TryCount
-        //{
-        //    get => TryCount;
-        //    set
-        //    {
-        //        if (value < 1 | value > 5)
-        //            throw new ArgumentOutOfRangeException("Invalid value - TryCount must be in the range 1-5");
-        //        TryCount = value;
-        //    }
-        //}
-
-        //public int RetryTimeSpan
-        //{
-        //    get => RetryTimeSpan;
-        //    set
-        //    {
-        //        if (value < 1 | value > 5)
-        //            throw new ArgumentOutOfRangeException("Invalid value - RetryTimeSpan must be in the range 1-5");
-        //        RetryTimeSpan = value;
-        //    }
-        //}
 
         public WebhookConfigurationApi()
         {

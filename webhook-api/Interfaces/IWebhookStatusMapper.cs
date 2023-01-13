@@ -1,12 +1,10 @@
-﻿using Microsoft.Net.Http.Headers;
-using webhook_api.Models;
+﻿using webhook_api.Models;
 
 namespace webhook_api.Interfaces
 {
     public interface IWebhookStatusMapper
     {
         WebhookStatus Map(WebhookStatusApi source);
-        //WebhookStatusApi MapToApi(WebhookStatus source);
     }
     public class WebhookStatusMapper : IWebhookStatusMapper
     {

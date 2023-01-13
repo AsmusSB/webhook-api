@@ -1,11 +1,3 @@
-using AutoFixture;
-using Azure.Core;
-using Azure;
-using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
-using webhook_api.Controllers;
-using webhook_api.Interfaces;
 using webhook_api.Models;
 using webhook_api.Services;
 using Microsoft.AspNetCore.Http;

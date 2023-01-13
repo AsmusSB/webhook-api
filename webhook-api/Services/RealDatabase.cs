@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using webhook_api.Context;
 using webhook_api.Interfaces;
@@ -15,45 +14,14 @@ namespace webhook_api.Services
             _db = db;
         }
 
-        public RealDatabase() {}
-        public WebhookConfiguration SaveForRetryLater(WebhookConfiguration webhook)
-        {
-            WebhookConfiguration tempWebhook = GetConfigurationById(webhook.Id);
-            if (tempWebhook != null)
-            { // changes every parameter except Id in database
-                tempWebhook.TenantId = webhook.TenantId;
-                tempWebhook.TryCount = webhook.TryCount;
-                tempWebhook.DestinationUrl = webhook.DestinationUrl;
-                tempWebhook.RetryTimeSpan = webhook.RetryTimeSpan;
-                tempWebhook.Headers = webhook.Headers;
-            }
-            else
-            {
-                _db.WebhookConfigurations.Add(webhook);
-            }
-            _db.SaveChanges();
-            return webhook;
-        }
-
-        public void SaveSuccessWebhook(WebhookConfiguration entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SaveFailedWebhook(WebhookConfiguration entity)
-        {
-            throw new NotImplementedException();
-        }
-
         public void SaveWebhookStatusAndHistory(WebhookStatus webhookStatus, HttpResponseMessage response)
         {
             bool alreadyExists = GetAllWebhookStatuses().Any(x => x.Config.Id == webhookStatus.Config.Id);
+
             if (response.IsSuccessStatusCode)
             {
-                Console.WriteLine("successful webhook updated for id: " + webhookStatus.Config.Id);
                 if (alreadyExists)
                 {
-                    Console.WriteLine("webhook already exists ind database");
                     webhookStatus.TimesSuccessfullyFired++;
                     webhookStatus.CurrentFailedAttempts = 0;
                     webhookStatus.Status = "Waiting for trigger";
@@ -72,7 +40,6 @@ namespace webhook_api.Services
                 }
                 else
                 {
-                    Console.WriteLine("wh doesnt exist in database already");
                     webhookStatus.TimesSuccessfullyFired = 1; 
                     webhookStatus.CurrentFailedAttempts = 0;
                     webhookStatus.Status = "Waiting for trigger";
@@ -92,7 +59,6 @@ namespace webhook_api.Services
             }
             else
             {
-                Console.WriteLine(webhookStatus.Config.Id + " webhook updated: failed attempt");
                 if (alreadyExists & webhookStatus.CurrentFailedAttempts <= 3)
                 {
                     webhookStatus.CurrentFailedAttempts++;
@@ -117,59 +83,9 @@ namespace webhook_api.Services
             }
         }
 
-        public List<WebhookConfiguration> GetAllWebhookConfigurations()
-        {
-            return _db.WebhookConfigurations.ToList();
-        }
-
         public List<WebhookStatus> GetAllWebhookStatuses()
         {
             return _db.WebhookStatus.Include(x => x.Config).ThenInclude(y => y.Headers).ToList();
-        }
-
-        public List<Header> GetAllHeaders()
-        {
-            return _db.Headers.ToList();
-        }
-
-        public WebhookConfiguration GetConfigurationById(int id)
-        {
-            List<WebhookConfiguration> webhookList = _db.WebhookConfigurations.ToList();
-            foreach (var wh in webhookList)
-            {
-                if (wh.Id == id)
-                {
-                    return wh;
-                }
-            }
-
-            return null;
-        }
-
-        public WebhookConfiguration DeleteFromRetry(int id)
-        {
-            WebhookConfiguration tempWebhook = GetConfigurationById(id);
-            if (tempWebhook != null)
-            {
-                _db.WebhookConfigurations.Remove(tempWebhook);
-                _db.SaveChanges();
-                return tempWebhook;
-            }
-            return null;
-        }
-
-        public List<Header>? GetHeadersByConfigId(int id)
-        {
-            List<Header> headerList = new List<Header>();
-
-            foreach (var h in _db.Headers.ToList())
-            {
-                if (h.Config.Id == id)
-                {
-                    headerList.Add(h);
-                }
-            }
-            return headerList;
         }
 
         public string AddConfiguration(WebhookConfiguration webhook)

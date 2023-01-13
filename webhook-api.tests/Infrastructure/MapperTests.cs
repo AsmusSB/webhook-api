@@ -1,6 +1,3 @@
-using AutoFixture;
-using Azure.Core;
-using Azure;
 using FluentAssertions;
 using webhook_api.Interfaces;
 using webhook_api.Models;

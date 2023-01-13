@@ -1,20 +1,11 @@
-﻿using System.Linq.Expressions;
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.Net;
 using System.Text;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.EntityFrameworkCore;
 using Polly;
 using Polly.Contrib.WaitAndRetry;
 using webhook_api.Models;
-using Polly.CircuitBreaker;
 using Polly.Extensions.Http;
-using Polly.Timeout;
 using webhook_api.Context;
 using webhook_api.Interfaces;
-using System.Reflection.PortableExecutable;
-using Microsoft.IdentityModel.Tokens;
-using Azure.Core;
 
 namespace webhook_api.Services
 {
@@ -85,7 +76,7 @@ namespace webhook_api.Services
         {
             foreach (var wh in _db.GetAllWebhookStatuses())
             {
-                if (wh.CurrentFailedAttempts is >= 0 and <= 3) // change to 1-3
+                if (wh.CurrentFailedAttempts is >= 1 and <= 3)
                 {
                     await ExecuteWebhookWithPollyRetry(wh);
                 }
@@ -117,8 +108,6 @@ namespace webhook_api.Services
                 Console.WriteLine(e);
                 return response;
             }
-            
-            Console.WriteLine("statuscode: " + response.StatusCode);
 
             return response;
         }

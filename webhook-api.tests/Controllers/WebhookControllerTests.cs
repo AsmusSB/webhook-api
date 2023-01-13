@@ -1,12 +1,8 @@
 using AutoFixture;
-using Azure.Core;
-using Azure;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NSubstitute;
 using webhook_api.Controllers;
-using webhook_api.Interfaces;
 using webhook_api.Models;
 using webhook_api.Services;
 
@@ -22,7 +18,7 @@ namespace webhook_api.tests.Controllers
         {
             _fixture = new Fixture();
             _serviceMock = new Mock<IWebhookService>();
-            _controller = new WebhookController(_serviceMock.Object); // creates implementation in-memory
+            _controller = new WebhookController(_serviceMock.Object);
         }
 
         [Fact]

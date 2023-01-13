@@ -7,18 +7,14 @@ namespace webhook_api.Models
     {
         public string HeaderName { get; set; }
         public string HeaderValue { get; set; }
-
-        public HeaderApi()
-        {
-        }
     }
     public class Header
     {
         public string HeaderName { get; set; }
         public string HeaderValue { get; set; }
-        [ForeignKey("WebhookHeader")]
 
-        //[InverseProperty(nameof(WebhookConfiguration.HeadersCollection))]
+        [ForeignKey("WebhookHeader")]
+        
         [Key]
         public int Id { get; set; }
         public WebhookConfiguration Config { get; set; }

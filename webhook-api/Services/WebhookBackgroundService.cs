@@ -15,7 +15,7 @@
 
         public Task StartAsync(CancellationToken stoppingToken)
         {
-            var backgroundServiceInterval = TimeSpan.FromHours(2);
+            var backgroundServiceInterval = TimeSpan.FromMinutes(5);
             _logger.LogInformation("Webhook Background Service running.");
             _timer = new Timer(RetryAllWebhooks, null, TimeSpan.Zero, backgroundServiceInterval);
             return Task.CompletedTask;

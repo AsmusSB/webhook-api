@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace webhook_api.Models
 {
@@ -8,10 +7,6 @@ namespace webhook_api.Models
     {
         public string Body { get; set; }
         public string TriggerEvent { get; set; }
-        
-        public WebhookStatusApi()
-        {
-        }
     }
     public class WebhookStatus
     {
@@ -20,7 +15,9 @@ namespace webhook_api.Models
         public int TimesSuccessfullyFired { get; set; }
         public int CurrentFailedAttempts { get; set; }
         public string Status { get; set; }
+
         [ForeignKey("WebhookStatus")]
+
         [Key]
         public int Id { get; set; }
         public WebhookConfiguration Config { get; set; }

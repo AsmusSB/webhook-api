@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Reflection.PortableExecutable;
-using Microsoft.AspNetCore.Localization;
-using webhook_api.Models;
+﻿using webhook_api.Models;
 
 namespace webhook_api.Interfaces
 {

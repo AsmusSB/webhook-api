@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Azure.Messaging.ServiceBus;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+//using webhook_api.Services;
 
 namespace WebhookDataProcessor
 {
@@ -22,8 +16,6 @@ namespace WebhookDataProcessor
         //    await _webhookService.SendAllWebhooksWhereTriggerDocumentUploaded();
         //    logger.LogInformation("WEBHOOKS SENT FOR UPLOADED DOCUMENTS");
         //}
-
-
 
         [FunctionName("UpdateReport")]
         public static void Run1([ServiceBusTrigger("webhook-added", "update-report", Connection = "WebhookDataConnection")] string mySbMsg, ILogger logger)
