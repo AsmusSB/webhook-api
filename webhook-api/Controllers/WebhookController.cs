@@ -24,16 +24,54 @@ namespace webhook_api.Controllers
             return Ok(whConfig);
         }
 
-        [Microsoft.AspNetCore.Mvc.Route("create-webhook-configuration-and-publish-message")]
+        [Microsoft.AspNetCore.Mvc.Route("create-webhook-configuration-and-publish-message-webhook-added")]
         [HttpPost]
         public async Task<ActionResult<WebhookConfiguration>> CreateWebhookAndPublish(WebhookConfigurationApi whApi)
         {
             WebhookConfiguration whConfig = await _webhookService.CreateWebhookConfiguration(whApi);
 
             string connectionString =
-                "Endpoint=sb://asmus-webhooks.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=L5xISPU52V+09+RKKI5idDg74SCt73UxbmwtGHo5lhs=";
+                "";
             var client = new ServiceBusClient(connectionString);
             var sender = client.CreateSender("webhook-added");
+            string body = JsonConvert.SerializeObject(whConfig, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+            var message = new ServiceBusMessage(body);
+            await sender.SendMessageAsync(message);
+            return Ok(whConfig);
+        }
+
+        [Microsoft.AspNetCore.Mvc.Route("create-webhook-configuration-and-publish-message-flow-completed")]
+        [HttpPost]
+        public async Task<ActionResult<WebhookConfiguration>> CreateWebhookAndPublish2(WebhookConfigurationApi whApi)
+        {
+            WebhookConfiguration whConfig = await _webhookService.CreateWebhookConfiguration(whApi);
+
+            string connectionString =
+                "";
+            var client = new ServiceBusClient(connectionString);
+            var sender = client.CreateSender("flow-completed");
+            string body = JsonConvert.SerializeObject(whConfig, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+            var message = new ServiceBusMessage(body);
+            await sender.SendMessageAsync(message);
+            return Ok(whConfig);
+        }
+
+        [Microsoft.AspNetCore.Mvc.Route("create-webhook-configuration-and-publish-message-document-uploaded")]
+        [HttpPost]
+        public async Task<ActionResult<WebhookConfiguration>> CreateWebhookAndPublish3(WebhookConfigurationApi whApi)
+        {
+            WebhookConfiguration whConfig = await _webhookService.CreateWebhookConfiguration(whApi);
+
+            string connectionString =
+                "";
+            var client = new ServiceBusClient(connectionString);
+            var sender = client.CreateSender("document-uploaded");
             string body = JsonConvert.SerializeObject(whConfig, new JsonSerializerSettings
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore

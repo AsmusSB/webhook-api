@@ -69,6 +69,10 @@ namespace webhook_api.Services
                 }
                 if(webhookStatus.CurrentFailedAttempts > 3)
                 {
+                    webhookStatus.Status = "Failed";
+                    _db.WebhookStatus.Update(webhookStatus);
+                    _db.SaveChanges();
+
                     WebhookHistory webhookHistory = new WebhookHistory
                     {
                         Result = "Failed",

@@ -15,24 +15,24 @@ namespace WebhookDataProcessor
         //{
         //    //await _webhookService.SendAllWebhooksWhereTriggerDocumentUploaded();
         //    logger.LogInformation("WEBHOOKS SENT FOR UPLOADED DOCUMENTS");
-        //    logger.LogInformation($"webhook: {mySbMsg}");
         //}
 
-        //[FunctionName("UpdateReport")]
-        //public static void Run1([ServiceBusTrigger("webhook-added", "update-report", Connection = "WebhookDataConnection")] string mySbMsg, ILogger logger)
-        //{
-        //    logger.LogInformation($"UPDATE REPORT: {mySbMsg}");
-        //}
-
-        //[FunctionName("SendWebhhook")]
-        //public static void Run2([ServiceBusTrigger("webhook-added", "send-webhook", Connection = "WebhookDataConnection")] string mySbMsg, ILogger logger)
-        //{
-        //    logger.LogInformation($"SEND WEBHOOK: {mySbMsg}");
-        //}
-        [FunctionName("SendEmail")]
-        public static void Run3([ServiceBusTrigger("webhook-added", "send-email", Connection = "WebhookDataConnection")] string mySbMsg, ILogger logger)
+        [FunctionName("WebhookAdded")]
+        public static void Run2([ServiceBusTrigger("webhook-added", "send-email", Connection = "WebhookDataConnection")] string mySbMsg, ILogger logger)
         {
-            logger.LogInformation($"SEND EMAIL: {mySbMsg}");
+            logger.LogInformation($"WEBHOOK ADDED: {mySbMsg}");
+        }
+
+        [FunctionName("FlowCompleted")]
+        public static void Run3([ServiceBusTrigger("flow-completed", "send-email", Connection = "WebhookDataConnection")] string mySbMsg, ILogger logger)
+        {
+            logger.LogInformation($"FLOW COMPLETED: {mySbMsg}");
+        }
+
+        [FunctionName("DocumentUploaded")]
+        public static void Run4([ServiceBusTrigger("document-uploaded", "send-email", Connection = "WebhookDataConnection")] string mySbMsg, ILogger logger)
+        {
+            logger.LogInformation($"DOCUMENT UPLOADED: {mySbMsg}");
         }
     }
 }
