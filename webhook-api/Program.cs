@@ -29,7 +29,6 @@ namespace webhook_api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
 
-
             builder.Services.AddControllersWithViews()
                 .AddJsonOptions(options =>
                     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
@@ -45,10 +44,6 @@ namespace webhook_api
             builder.Services.AddScoped<IHeaderMapper, HeaderMapper>();
             builder.Services.AddScoped<IWebhookStatusMapper, WebhookStatusMapper>();
             builder.Services.AddScoped<IWebhookConfigurationMapper, WebhookConfigurationMapper>();
-
-
-            
-
 
             builder.Services.AddSwaggerGen();
             var app = builder.Build();
